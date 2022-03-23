@@ -5,8 +5,17 @@ namespace Resources.Scripts.Command
 {
     public class CommandManager : MonoBehaviour
     {
-        private List<Command> _commands;
+        [SerializeField] private List<Player> _player;
         
+        private List<Command> _commands;
+
+        private void RunAlgorithm()
+        {
+            foreach (var player in _player)
+            {
+                
+            }
+        }
     }
 }
 

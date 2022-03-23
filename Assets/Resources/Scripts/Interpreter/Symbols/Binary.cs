@@ -1,17 +1,17 @@
 ﻿using Resources.Scripts.Interpreter.TokenInfo;
 
-namespace LanguageInterpreterLibrary.Symbols
+namespace Resources.Scripts.Interpreter.Symbols
 {
     public class Binary : ArithmeticOperation
     {
-        public Token Operator { get; set; }
-        public Symbol Left { get; set; }
-        public Symbol Right { get; set; }
+        public Token Operator { get; }
+        public Symbol Left { get; }
+        public Symbol Right { get; }
         public Binary(Symbol left, Token op, Symbol right)
         {
-            this.Operator = op;
-            this.Left = left;
-            this.Right = right;
+            Operator = op;
+            Left = left;
+            Right = right;
         }
     }
 }

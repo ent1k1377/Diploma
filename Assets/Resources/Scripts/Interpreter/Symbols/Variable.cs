@@ -1,10 +1,12 @@
-﻿using Resources.Scripts.Interpreter.TokenInfo;
+﻿using Resources.Scripts.Interpreter;
+using Resources.Scripts.Interpreter.TokenInfo;
 
-namespace LanguageInterpreterLibrary.Symbols
+namespace Resources.Scripts.Interpreter.Symbols
 {
     public class Variable : Symbol
     {
-        public Token Field { get; set; }
-        public Variable(Token field) => this.Field = field;
+        public Token Field { get; }
+        public Variable(Token field) => Field = field;
     }
 }
+

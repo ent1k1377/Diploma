@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace LanguageInterpreterLibrary.Symbols
+namespace Resources.Scripts.Interpreter.Symbols
 {
     public class AvailableSymbol : Symbol
     {
-        public List<Symbol> CodeLine { get; set; }
-        public AvailableSymbol() => CodeLine = new();
+        public List<Symbol> CodeLine { get; }
+        public AvailableSymbol() => CodeLine = new List<Symbol>();
         public void Add(Symbol node) => CodeLine.Add(node);
     }
 }

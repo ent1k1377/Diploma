@@ -1,4 +1,4 @@
-﻿namespace LanguageInterpreterLibrary.Symbols
+﻿namespace Resources.Scripts.Interpreter.Symbols
 {
     public class ArithmeticOperation : Symbol { }
 }

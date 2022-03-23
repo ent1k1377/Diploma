@@ -13,8 +13,6 @@ namespace Resources.Scripts.Command.UI
         private CanvasGroup _canvasGroup;
         private RectTransform _rectTransform;
 
-        public event UnityAction UICommandDropped;
-
         private bool we = true;
         private void Awake()
         {

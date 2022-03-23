@@ -3,22 +3,15 @@ using UnityEngine;
 
 namespace Resources.Scripts.Interpreter
 {
-    public class Interpreter : MonoBehaviour
+    public class Interpreter
     {
-        private void Start()
+
+        public void Run(string code, Player player)
         {
-            var sourceCode =
-                @"
-                like ::= 1; 
-                subscribe ::= like;
-                Print [like + subscribe] * 2 + 2;
-                ";
-            
-            Tokenizer lexer = new(sourceCode);
+            Tokenizer lexer = new(code);
             lexer.Analysis();
-            
-            var parser = new Parser(lexer.Tokens);
-            foreach (var item in parser.Res) Debug.Log($"{item}");
+            lexer.Tokens.ForEach(Debug.Log);
+            _ = new Parser(lexer.Tokens, player);
         }
     }
 }

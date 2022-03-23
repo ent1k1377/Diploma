@@ -1,171 +1,229 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using LanguageInterpreterLibrary.Symbols;
+using System.Threading.Tasks;
 using Resources.Scripts.Interpreter.Exceptions;
+using Resources.Scripts.Interpreter.Symbols;
 using Resources.Scripts.Interpreter.TokenInfo;
 using Resources.Scripts.Interpreter.Types;
+using UnityEngine;
+using static Resources.Scripts.Interpreter.Types.TokenType;
 
 namespace Resources.Scripts.Interpreter.Analyzers
 {
-    using static Convert;
     public class Parser
     {
-        private List<Token> Tokens { get; }
+        private readonly List<Token> _tokens;
+        private readonly Player _player;
         private int _position;
-        private readonly Dictionary<string, string> _fields = new();
+
+        public Parser(List<Token> tokens, Player player) // Поменять в методах где возращаю bool, false на исключения всевохможные
+        {
+            _tokens = tokens;
+            _player = player;
+            _ = Parse();
+        }
+
+        private Token Check(List<TokenId> tokens)
+        {
+            if (tokens == null) 
+                throw new ArgumentNullException(nameof(tokens));
+            if (_position >= _tokens.Count) 
+                return null;
+            
+            var token = _tokens[_position];
+            var exp = tokens.FirstOrDefault(t => t.Type == token.Id.Type);
+            if (exp == null) 
+                return null;
+
+            _position++;
+            return token;
+        }
         
-        public readonly ObservableCollection<string> Res = new();
-
-        public Parser(List<Token> tokens)
+        private Token Check(TokenId token)
         {
-            Tokens = tokens;
-            _position = 0;
-            var expressionNode = Parse();
-            Res.Clear();
-            Start(expressionNode);
-        }
-
-        private Token Check(List<TokenId> token)
-        {
-            if (_position < Tokens.Count)
-            {
-                Token t = Tokens[_position];
-                TokenId exp = token.FirstOrDefault(e => e.Identifier == t.Id.Identifier);
-                if (exp == null) return null;
-                _position++;
-                return t;
-            }
-            return null;
-        }
-
-        private Token Take(List<TokenId> tokens)
-        {
-            var t = Check(tokens);
-            return t ?? throw new TakeTokenException();
-        }
-
-        private Symbol TerminalProcessing()
-        {
-            var token = Check(new List<TokenId> { TypeList.GetTokenBy("Terminal") });
-            if (token != null) return new Unary(token, ArithmeticExpressionProcessing());
-            throw new TerminalProcessingException();
-        }
-
-        private Symbol VariableOrIntegerProcessing()
-        {
-            var token = Check(new List<TokenId> { TypeList.GetTokenBy("Integer") });
-            if (token != null) return new Integer(token);
-            token = Check(new List<TokenId> { TypeList.GetTokenBy("Variable") });
-            if (token != null) return new Variable(token);
-            throw new VariableOrIntegerProcessingException();
-        }
-
-        private Symbol BracketsProcessing()
-        {
-            if (Check(new List<TokenId> {TypeList.GetTokenBy("LeftBracket")}) == null) return VariableOrIntegerProcessing();
+            if (_position >= _tokens.Count) 
+                return null;
             
-            Symbol n = ArithmeticExpressionProcessing();
-            Take(new List<TokenId> { TypeList.GetTokenBy("RightBracket") });
-            return n;
+            var currentToken = _tokens[_position];
+            if (token.Type != currentToken.Id.Type) 
+                return null;
+            
+            _position++;
+            return currentToken;
         }
 
-        private Symbol ArithmeticExpressionProcessing()
+        private async Task<bool> MethodProcessing()
         {
-            Symbol left = BracketsProcessing();
-            Token op = Check(new List<TokenId>
+            var methodToken = Check(TypeList.GetMethodsTokens());
+            if (methodToken is null) 
+                return false;
+            
+            var methodArgumentToken = Check(TypeList.GetTokenBy(Direction));
+            if (methodArgumentToken is null)
+                throw new PassingArgumentException();
+            
+            await Run(new MethodOperation(methodToken, methodArgumentToken));
+            return true;
+        }
+
+        private Symbol BooleanExpressionProcessing()
+        {
+            var operandLeft = Check(TypeList.GetLeftBooleanArgumentTokens());
+            if (operandLeft is null)
+                throw new Exception();
+            
+            var comparisonOperator = Check(TypeList.GetTokenBy(ComparisonOperator));
+            if (comparisonOperator is null)
+                throw new Exception();
+            
+            var operandRight = Check(TypeList.GetTokenBy(BooleanArgument));
+            return operandRight is null ? throw new Exception() : new BooleanOperation(operandLeft, comparisonOperator, operandRight);
+        }
+
+        private async Task AddBooleanExpressions(ICollection<bool> booleanExpressions, ICollection<TokenType> booleanOperators)
+        {
+            Token booleanOperator;
+            do
+            {
+                var booleanExpression = BooleanExpressionProcessing();
+                var boolResult = await RunQ(booleanExpression);
+                booleanExpressions.Add(boolResult);
+                
+                booleanOperator = Check(new List<TokenId>{TypeList.GetTokenBy(And), TypeList.GetTokenBy(Or)});
+                if (booleanOperator != null)
+                    booleanOperators.Add(booleanOperator.Id.Type);
+            } while (booleanOperator != null);
+        }
+        
+        private async Task<bool> CheckCondition()
+        {
+            List<bool> booleanExpressions = new();
+            List<TokenType> booleanOperators = new();
+            await AddBooleanExpressions(booleanExpressions, booleanOperators);
+            
+            var endConditions = Check(TypeList.GetTokenBy(EndBody));
+            if (endConditions is null)
+                throw new Exception();
+            
+            for (var i = 0; i < booleanOperators.Count; i++)
+            {
+                bool result;
+                if (booleanOperators[i] == And)
+                    result = booleanExpressions[i] && booleanExpressions[i + 1];
+                else
+                    result = booleanExpressions[i] || booleanExpressions[i + 1];
+                booleanExpressions[i + 1] = result;
+            }
+            return booleanExpressions.Last();
+        }
+        
+        private async Task<bool> ConditionalOperatorProcessing()
+        {
+            var conditionalToken = Check(TypeList.GetTokenBy(If));
+            if (conditionalToken is null) 
+                return false;
+            
+            var resultConditions = await CheckCondition();
+            if (resultConditions)
+            {
+                Token endTokenIf;
+                do
                 {
-                TypeList.GetTokenBy("Subtraction"),
-                TypeList.GetTokenBy("Addition"),
-                TypeList.GetTokenBy("Multiplication"),
-                TypeList.GetTokenBy("Division")
-            }
-            );
+                    await ExpressionProcessing();
+                    endTokenIf = Check(new List<TokenId> {TypeList.GetTokenBy(Else), TypeList.GetTokenBy(EndIf)});
+                    Debug.Log(endTokenIf is null);
+                } while (endTokenIf is null);
+                
+                Debug.Log("Вышел из цикла");
+                if (endTokenIf.Id.Type == EndIf) 
+                    return true;
 
-            while (op != null)
-            {
-                Symbol right = BracketsProcessing();
-                left = new Binary(left, op, right);
-                op = Check(new List<TokenId>
+                while (true) // Пропускаем все токены до конца if'а
                 {
-                    TypeList.GetTokenBy("Subtraction"),
-                    TypeList.GetTokenBy("Addition"),
-                    TypeList.GetTokenBy("Multiplication"),
-                    TypeList.GetTokenBy("Division")
-                });
+                    var t = Check(TypeList.GetTokenBy(EndIf));
+                    Debug.Log(t);
+                    if (t is not null)
+                        return true;
+                }
+                    
             }
-            return left;
-        }
-
-        private Symbol ExpressionProcessing()
-        {
-            var tokens = new List<TokenId> {TypeList.GetTokenBy("Variable")};
-            if (Check(tokens) == null)
-                return TerminalProcessing();
-            _position--;
-            var symbol = VariableOrIntegerProcessing();
-            var token = Check(new List<TokenId> { TypeList.GetTokenBy("AssignmentOperator") });
-            if (token != null)
+            else
             {
-                Symbol right = ArithmeticExpressionProcessing();
-                var binary = new Binary(symbol, token, right);
-                return binary;
-            }
-            throw new ExpressionProcessingException();
-        }
-
-        private Symbol Parse()
-        {
-            AvailableSymbol an = new();
-            while (_position < Tokens.Count)
-            {
-                var symbol = ExpressionProcessing();
-                Take(new List<TokenId> { TypeList.GetTokenBy("EndLine") });
-                an.Add(symbol);
-            }
-            return an;
-        }
-
-        private int? Start(Symbol symbol)
-        {
-            Console.WriteLine(symbol);
-            if (symbol is Integer i) { return int.Parse(i.Number.Value); }
-            if (symbol is Unary u)
-            {
-                switch (u.Operator.Id.Identifier)
+                Token endTokenIf;
+                while (true) // Пропускаем все токены пока не встретим Else
                 {
-                    case "Terminal":
-                        Res.Add($">  {Start(u.Operand)}");
-                        return Start(u.Operand);
+                    endTokenIf = Check(new List<TokenId> {TypeList.GetTokenBy(Else), TypeList.GetTokenBy(EndIf)});
+                    if (Check(TypeList.GetTokenBy(Else)) is not null)
+                        break;
+                }
+
+                if (endTokenIf.Id.Type == EndIf)
+                    return true;
+                
+                
+                while (true) // Пропускаем все токены пока не встретим Else
+                {
+                    if (Check(TypeList.GetMethodsTokens()) is not null)
+                        await MethodProcessing();
+                    else if (Check(TypeList.GetTokenBy(If)) is not null)
+                        await ConditionalOperatorProcessing();
+                    else if (Check(TypeList.GetTokenBy(EndIf)) is not null)
+                        return true;
                 }
             }
-            if (symbol is Binary b)
-            {
-                switch (b.Operator.Id.Identifier)
-                {
-                    case "Addition": return ToInt32(Start(b.Left)) + ToInt32(Start(b.Right));
-                    case "Subtraction": return ToInt32(Start(b.Left)) - ToInt32(Start(b.Right));
-                    case "Multiplication": return ToInt32(Start(b.Left)) * ToInt32(Start(b.Right));
-                    case "Division": return ToInt32(Start(b.Left)) / ToInt32(Start(b.Right));
+        }
+        
+        private async Task ExpressionProcessing()
+        {
+            if (await MethodProcessing())
+                return;
+            if (await ConditionalOperatorProcessing())
+                return;
+        }
 
-                    case "AssignmentOperator":
-                        int? result = Start(b.Right);
-                        Variable variableNode = (Variable)b.Left;
-                        _fields[variableNode.Field.Value] = result.ToString();
-                        return result;
+        private async Task Parse()
+        {
+            while (_position < _tokens.Count)
+                await ExpressionProcessing();
+        }
+
+        private async Task<bool> RunQ(Symbol symbol)
+        {
+            switch (symbol)
+            {
+                case BooleanOperation b:
+                {
+                    return await _player.Check(b.LeftOperand, b.СomparisonOperator, b.RightOperand);
                 }
             }
-            if (symbol is Variable v)
-            {
-                if (!_fields.ContainsKey(v.Field.Value)) throw new VariableNotFoundException();
-                return ToInt32(_fields[v.Field.Value]);
-            }
+            throw new InterpreterRunException();
+        }
 
-            if (symbol is not AvailableSymbol a) throw new InterpreterException();
-            
-            a.CodeLine.ForEach(codeString => Start(codeString));
-            return null;
+        private async Task Run(Symbol symbol)
+        {
+            switch (symbol)
+            {
+                case MethodOperation m:
+                {
+                    var argument = m.Argument.Value;
+                    switch (m.MethodType.Id.Type)
+                    {
+                        case Step:
+                            await _player.Step(argument);
+                            return;
+                        case TakeFrom:
+                            await _player.TakeFrom(argument);
+                            return;
+                        case GiveTo:
+                            await _player.GiveTo(argument);
+                            return;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+            throw new InterpreterRunException();
         }
     }
 }

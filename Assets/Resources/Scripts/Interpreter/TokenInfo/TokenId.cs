@@ -1,14 +1,16 @@
-﻿namespace Resources.Scripts.Interpreter.TokenInfo
+﻿using Resources.Scripts.Interpreter.Types;
+
+namespace Resources.Scripts.Interpreter.TokenInfo
 {
     public class TokenId
     {
-        public string Identifier { get; }
+        public TokenType Type { get; }
         public string SearchPattern { get; }
-        public TokenId(string id, string pattern)
+        public TokenId(TokenType id, string pattern)
         {
-            Identifier = id;
+            Type = id;
             SearchPattern = pattern;
         }
-        public override string ToString() => $"TokenType [ Identifier: {Identifier}]";
+        public override string ToString() => $"TokenType [ Identifier: {Type} ]";
     }
 }

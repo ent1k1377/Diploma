@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LanguageInterpreterLibrary.Symbols
+﻿namespace Resources.Scripts.Interpreter.Symbols
 {
     public class Symbol { }
 }

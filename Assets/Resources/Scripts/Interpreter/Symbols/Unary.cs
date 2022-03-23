@@ -1,11 +1,11 @@
 ﻿using Resources.Scripts.Interpreter.TokenInfo;
 
-namespace LanguageInterpreterLibrary.Symbols
+namespace Resources.Scripts.Interpreter.Symbols
 {
     public class Unary : ArithmeticOperation
     {
-        public Token Operator { get; set; }
-        public Symbol Operand { get; set; }
+        public Token Operator { get; }
+        public Symbol Operand { get; }
         public Unary(Token op, Symbol operand)
         {
             Operator = op;

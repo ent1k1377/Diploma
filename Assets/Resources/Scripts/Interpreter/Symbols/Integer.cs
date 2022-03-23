@@ -1,6 +1,6 @@
 ﻿using Resources.Scripts.Interpreter.TokenInfo;
 
-namespace LanguageInterpreterLibrary.Symbols
+namespace Resources.Scripts.Interpreter.Symbols
 {
     public class Integer : Symbol
     {

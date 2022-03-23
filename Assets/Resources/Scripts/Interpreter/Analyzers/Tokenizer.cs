@@ -6,6 +6,7 @@ using Resources.Scripts.Interpreter.Exceptions;
 using Resources.Scripts.Interpreter.TokenInfo;
 using Resources.Scripts.Interpreter.Types;
 using static System.String;
+using static Resources.Scripts.Interpreter.Types.TokenType;
 
 namespace Resources.Scripts.Interpreter.Analyzers
 {
@@ -32,31 +33,30 @@ namespace Resources.Scripts.Interpreter.Analyzers
 
             #endregion
         }
-        public List<Token> Analysis()
+        public void Analysis()
         {
             while (GetToken()) {; }
             Tokens = Tokens
-                .Where(t => t.Id.Identifier != TypeList.GetTokenBy("Comment").Identifier)
-                .Where(t => t.Id.Identifier != TypeList.GetTokenBy("EmptyOperator").Identifier)
+                .Where(t => t.Id.Type != TypeList.GetTokenBy(Comment).Type)
+                .Where(t => t.Id.Type != TypeList.GetTokenBy(EmptyOperator).Type)
                 .ToList();
-            return Tokens;
         }
 
         private bool GetToken()
         {
-            if (_cursorPosition >= _sourceCode.Length) return false;
+            if (_cursorPosition >= _sourceCode.Length) 
+                return false;
+            
             foreach (var tokenType in TypeList.Types)
             {
                 Regex regex = new($"^{tokenType.SearchPattern}");
                 var result = regex.Match(_sourceCode[_cursorPosition..]).Value;
-                
-                if (!IsNullOrEmpty(result))
-                {
-                    Token token = new(tokenType, result, _cursorPosition);
-                    _cursorPosition += result.Length;
-                    Tokens.Add(token);
-                    return true;
-                }
+
+                if (IsNullOrEmpty(result)) continue;
+                Token token = new(tokenType, result, _cursorPosition);
+                _cursorPosition += result.Length;
+                Tokens.Add(token);
+                return true;
             }
             throw new GetTokenException();
         }
