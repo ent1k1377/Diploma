@@ -35,17 +35,25 @@ namespace Resources.Scripts
             
             var sourceCode3 =
                 @"
-                TakeFrom W
-                TakeFrom E
-                if S == something:
-                    TakeFrom S
-                    TakeFrom E
-                    TakeFrom W
-                    GiveTo S
+                GiveTo S
+                GiveTo E
+                if S != something:
+                    if S == something or S == something:
+                        GiveTo W
+                    else:
+                        GiveTo S
+                    endif
                     GiveTo E
                 else:
-                    TakeFrom E
+                    if S != something:
+                        GiveTo W
+                    else:
+                        GiveTo S
+                    endif
+                    GiveTo E
                 endif
+                GiveTo S
+                GiveTo E
                 ";
             
             var interpreter = new Interpreter.Interpreter();
@@ -66,29 +74,24 @@ namespace Resources.Scripts
             return _mapObstacle.GetTile(target) is null;
         }
 
-        public async Task Step(string direction)
+        public void Step(string direction)
         {
-            await Task.Delay(5000);
             Debug.Log($"Step: {direction}");
         }
         
-        public async Task TakeFrom(string direction)
+        public void TakeFrom(string direction)
         {
-            await Task.Delay(5000);
             Debug.Log($"TakeFrom: {direction}");
         }
         
-        public async Task GiveTo(string direction)
+        public void GiveTo(string direction)
         {
-            await Task.Delay(5000);
             Debug.Log($"GiveTo: {direction}");
 
         }
 
-        public async Task<bool> Check(Token leftOperand, Token comparisonOperator, Token rightOperand)
+        public bool Check(Token leftOperand, Token comparisonOperator, Token rightOperand)
         {
-            Debug.Log(comparisonOperator.Value == "==");
-            await Task.Delay(1000);
             return comparisonOperator.Value == "==";
         }
 

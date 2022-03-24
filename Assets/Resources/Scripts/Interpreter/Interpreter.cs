@@ -10,7 +10,7 @@ namespace Resources.Scripts.Interpreter
         {
             Tokenizer lexer = new(code);
             lexer.Analysis();
-            lexer.Tokens.ForEach(Debug.Log);
+            //lexer.Tokens.ForEach(Debug.Log);
             _ = new Parser(lexer.Tokens, player);
         }
     }
