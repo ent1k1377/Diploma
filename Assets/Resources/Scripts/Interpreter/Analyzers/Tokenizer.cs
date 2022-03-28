@@ -35,7 +35,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
         }
         public void Analysis()
         {
-            while (GetToken()) {; }
+            while (GetToken()) { }
             Tokens = Tokens
                 .Where(t => t.Id.Type != TypeList.GetTokenBy(Comment).Type)
                 .Where(t => t.Id.Type != TypeList.GetTokenBy(EmptyOperator).Type)
@@ -52,7 +52,8 @@ namespace Resources.Scripts.Interpreter.Analyzers
                 Regex regex = new($"^{tokenType.SearchPattern}");
                 var result = regex.Match(_sourceCode[_cursorPosition..]).Value;
 
-                if (IsNullOrEmpty(result)) continue;
+                if (IsNullOrEmpty(result)) 
+                    continue;
                 Token token = new(tokenType, result, _cursorPosition);
                 _cursorPosition += result.Length;
                 Tokens.Add(token);

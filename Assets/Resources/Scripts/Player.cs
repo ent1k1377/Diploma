@@ -16,14 +16,6 @@ namespace Resources.Scripts
 
         private void Start()
         {
-            var sourceCode =
-                @"
-                like ::= 1; 
-                subscribe ::= like;
-                Print 2 + 2;
-                Print2;
-                ";
-
             var sourceCode2 =
                 @"
                 TakeFrom S
@@ -35,8 +27,6 @@ namespace Resources.Scripts
             
             var sourceCode3 =
                 @"
-                GiveTo S
-                GiveTo E
                 if S != something:
                     if S == something or S == something:
                         GiveTo W
@@ -48,12 +38,13 @@ namespace Resources.Scripts
                     if S != something:
                         GiveTo W
                     else:
-                        GiveTo S
+                        if S == something:
+                            GiveTo W
+                        endif   
+                        GiveTo E
                     endif
                     GiveTo E
                 endif
-                GiveTo S
-                GiveTo E
                 ";
             
             var interpreter = new Interpreter.Interpreter();

@@ -20,7 +20,7 @@ namespace Resources.Scripts.Interpreter.Types
                     new(Direction, "[N,E,S,W,C]{1,2}"),
                     new(MyItem, "MyItem"),
                     new(If, "if"),
-                    new(Else, "else"),
+                    new(Else, "else:"),
                     new(EndIf, "endif"),
                     new(ComparisonOperator, "([=,!,>,<][=])|[>,<]"),
                     new(And, "and"),
@@ -34,7 +34,7 @@ namespace Resources.Scripts.Interpreter.Types
             return Types.FirstOrDefault(id => id.Type == tokenType);
         }
 
-        public static List<TokenId> GetMethodsTokens()
+        public static IEnumerable<TokenId> GetMethodsTokens()
         {
             return new List<TokenId>
             {
@@ -44,7 +44,7 @@ namespace Resources.Scripts.Interpreter.Types
             };
         }
 
-        public static List<TokenId> GetLeftBooleanArgumentTokens()
+        public static IEnumerable<TokenId> GetLeftBooleanArgumentTokens()
         {
             return new List<TokenId>
             {

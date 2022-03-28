@@ -5,7 +5,6 @@ namespace Resources.Scripts.Interpreter
 {
     public class Interpreter
     {
-
         public void Run(string code, Player player)
         {
             Tokenizer lexer = new(code);
