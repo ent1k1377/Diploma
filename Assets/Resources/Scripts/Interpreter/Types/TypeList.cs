@@ -27,6 +27,8 @@ namespace Resources.Scripts.Interpreter.Types
                     new(Or, "or"),
                     new(BooleanArgument, "something|nothing|datacube|worker|hole|wall|[0-9]{1,2}"),
                     new(EndBody, ":"),
+                    new(GoTo, "goto"),
+                    new(Label, "[a-z]:"),
                 };
         }
         public static TokenId GetTokenBy(TokenType tokenType)
@@ -71,7 +73,9 @@ namespace Resources.Scripts.Interpreter.Types
         And,
         Or,
         BooleanArgument,
-        EndBody
+        EndBody,
+        GoTo,
+        Label,
     }
 
 }
