@@ -12,7 +12,6 @@
             Value = value;
             Position = position;
         }
-        public override string ToString()
-            => $"TOKEN [ Value: {Value}] Position: {Position}\n   Id: {Id} ";
+        public override string ToString() => $"TOKEN [ Value: {Value}] Position: {Position}\n   Id: {Id} ";
     }
 }

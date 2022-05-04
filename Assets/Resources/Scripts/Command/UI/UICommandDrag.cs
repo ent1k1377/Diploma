@@ -5,8 +5,6 @@ namespace Resources.Scripts.Command.UI
 {
     public class UICommandDrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        [SerializeField] private RectTransform currentTransform;
-        
         private GameObject _mainContent;
         private Vector3 _currentPosition;
 
@@ -14,32 +12,29 @@ namespace Resources.Scripts.Command.UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            _currentPosition = currentTransform.position;
-            _mainContent = currentTransform.parent.gameObject;
+            _currentPosition = transform.position;
+            _mainContent = transform.parent.gameObject;
             _totalChild = _mainContent.transform.childCount;
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            currentTransform.position =
-                new Vector3(currentTransform.position.x, eventData.position.y, currentTransform.position.z);
+            transform.position = new Vector3(transform.position.x, eventData.position.y, transform.position.z);
 
             for (var i = 0; i < _totalChild; i++)
             {
-                if (i != currentTransform.GetSiblingIndex())
+                if (i != transform.GetSiblingIndex())
                 {
-                    Transform otherTransform = _mainContent.transform.GetChild(i);
-                    var distance = (int) Vector3.Distance(currentTransform.position,
+                    var otherTransform = _mainContent.transform.GetChild(i);
+                    var distance = (int) Vector3.Distance(transform.position,
                         otherTransform.position);
                     if (distance <= 10)
                     {
-                        Vector3 otherTransformOldPosition = otherTransform.position;
-                        otherTransform.position = new Vector3(otherTransform.position.x, _currentPosition.y,
-                            otherTransform.position.z);
-                        currentTransform.position = new Vector3(currentTransform.position.x, otherTransformOldPosition.y,
-                            currentTransform.position.z);
-                        currentTransform.SetSiblingIndex(otherTransform.GetSiblingIndex());
-                        _currentPosition = currentTransform.position;
+                        var otherTransformOldPosition = otherTransform.position;
+                        otherTransform.position = new Vector3(otherTransform.position.x, _currentPosition.y, otherTransform.position.z);
+                        transform.position = new Vector3(transform.position.x, otherTransformOldPosition.y, transform.position.z);
+                        transform.SetSiblingIndex(otherTransform.GetSiblingIndex());
+                        _currentPosition = transform.position;
                     }
                 }
             }
@@ -47,7 +42,7 @@ namespace Resources.Scripts.Command.UI
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            currentTransform.position = _currentPosition;
+            transform.position = _currentPosition;
         }
     }
 }
