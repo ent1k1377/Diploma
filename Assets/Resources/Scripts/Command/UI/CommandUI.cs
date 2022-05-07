@@ -49,7 +49,7 @@ namespace Resources.Scripts.Command.UI
         {
             _transparentView.SetActive(true);
             _transparentView.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
-            _transparentView.transform.SetParent(CommandUILinks.Instance.CommandFieldContainer);
+            _transparentView.transform.SetParent(CommandUIManager.Instance.CommandFieldContainer);
             _transparentView.transform.SetSiblingIndex(index);
         }
 
@@ -58,9 +58,9 @@ namespace Resources.Scripts.Command.UI
             Transform beforeCurrentCommand = null; 
             Transform afterCurrentCommand = null;
             
-            for (var i = 0; i < CommandUILinks.Instance.CommandFieldContainer.childCount; i++)
+            for (var i = 0; i < CommandUIManager.Instance.CommandFieldContainer.childCount; i++)
             {
-                var otherTransform = CommandUILinks.Instance.CommandFieldContainer.transform.GetChild(i);
+                var otherTransform = CommandUIManager.Instance.CommandFieldContainer.transform.GetChild(i);
                 if (otherTransform.position.y - _distanceBetweenCommand >= transform.position.y)
                     beforeCurrentCommand = otherTransform;
                 else if (otherTransform.position.y + _distanceBetweenCommand < transform.position.y && afterCurrentCommand is null)
@@ -69,7 +69,7 @@ namespace Resources.Scripts.Command.UI
                 if (beforeCurrentCommand is not null && afterCurrentCommand is not null)
                     SetTransparentViewIndex(beforeCurrentCommand.GetSiblingIndex() + 1);
                 else if (beforeCurrentCommand is not null)
-                    SetTransparentViewIndex(CommandUILinks.Instance.CommandFieldContainer.childCount);
+                    SetTransparentViewIndex(CommandUIManager.Instance.CommandFieldContainer.childCount);
                 else if (afterCurrentCommand is not null)
                     SetTransparentViewIndex(0);
             }
@@ -91,12 +91,13 @@ namespace Resources.Scripts.Command.UI
             _rectTransform.anchoredPosition += eventData.delta / _mainCanvas.scaleFactor;
 
             var raycastResults = new List<RaycastResult>();
-            CommandUILinks.Instance.GraphicRaycaster.Raycast(eventData, raycastResults);
+            CommandUIManager.Instance.GraphicRaycaster.Raycast(eventData, raycastResults);
 
             if (raycastResults.Count(r => r.gameObject.TryGetComponent(out UICommandField _)) == 1)
                 SetTransparentView();
             else
-                ChangeCommandView();
+                _transparentView.transform.SetParent(transform);
+            ChangeCommandView();
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -105,26 +106,24 @@ namespace Resources.Scripts.Command.UI
             {
                 transform.SetParent(_container);
                 transform.localPosition = Vector3.zero;
+                return;
             }
-            else
+            if (eventData.pointerEnter is not null)
             {
-                if (eventData.pointerEnter is not null)
-                {
-                    var raycastResults = new List<RaycastResult>();
-                    CommandUILinks.Instance.GraphicRaycaster.Raycast(eventData, raycastResults);
+                var raycastResults = new List<RaycastResult>();
+                CommandUIManager.Instance.GraphicRaycaster.Raycast(eventData, raycastResults);
 
-                    if (raycastResults.Count(r => r.gameObject.TryGetComponent(out UICommandField _)) == 1)
-                    {
-                        transform.SetParent(CommandUILinks.Instance.CommandFieldContainer);
-                        _rectTransform.sizeDelta = new Vector2(300, 100);
-                        transform.SetSiblingIndex(_transparentView.transform.GetSiblingIndex());
-                        _transparentView.SetActive(false);
-                        _transparentView.transform.SetParent(transform);
-                        return;
-                    }
+                if (raycastResults.Count(r => r.gameObject.TryGetComponent(out UICommandField _)) == 1)
+                {
+                    transform.SetParent(CommandUIManager.Instance.CommandFieldContainer);
+                    _rectTransform.sizeDelta = new Vector2(300, 100);
+                    transform.SetSiblingIndex(_transparentView.transform.GetSiblingIndex());
+                    _transparentView.SetActive(false);
+                    _transparentView.transform.SetParent(transform);
+                    return;
                 }
-                Destroy(gameObject);
             }
+            Destroy(gameObject);
         }
 
         private void OnDestroy()

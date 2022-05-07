@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 36671503}
   - component: {fileID: 36671502}
   - component: {fileID: 36671501}
+  - component: {fileID: 36671504}
   m_Layer: 5
   m_Name: CommandMove
   m_TagString: Untagged
@@ -348,6 +349,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &36671504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36671499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e894d9211869cc545bc8d79c65c34f90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 7
 --- !u!1 &56723669
 GameObject:
   m_ObjectHideFlags: 0
@@ -6824,7 +6838,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1407.53, y: 0}
+  m_AnchoredPosition: {x: 1407.53, y: -0.00036621094}
   m_SizeDelta: {x: -1407.53, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1439003731
@@ -7954,6 +7968,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _graphicRaycaster: {fileID: 148611537}
   _commandFieldContainer: {fileID: 1807666780}
+  _content: {fileID: 1439003729}
   _plug: {fileID: 504174997}
 --- !u!4 &1607840631
 Transform:
@@ -8496,7 +8511,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 300
+  m_MinHeight: 400
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -8518,7 +8533,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 25
-    m_Bottom: 100
+    m_Bottom: 300
   m_ChildAlignment: 0
   m_Spacing: 10
   m_ChildForceExpandWidth: 1
@@ -9119,6 +9134,7 @@ GameObject:
   - component: {fileID: 2037736064}
   - component: {fileID: 2037736063}
   - component: {fileID: 2037736062}
+  - component: {fileID: 2037736065}
   m_Layer: 5
   m_Name: CommandTakeFrom
   m_TagString: Untagged
@@ -9197,6 +9213,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2037736065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037736060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e894d9211869cc545bc8d79c65c34f90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 7
 --- !u!1 &2049361279
 GameObject:
   m_ObjectHideFlags: 0
