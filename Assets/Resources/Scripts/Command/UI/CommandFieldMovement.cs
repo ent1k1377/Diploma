@@ -41,9 +41,9 @@ namespace Resources.Scripts.Command.UI
             var yPosition = CommandUIManager.Instance.Camera.WorldToViewportPoint(transform.position).y;
             var rectTransform = CommandUIManager.Instance.Content.GetComponent<RectTransform>();
 
-            if (yPosition < 0.25f && Screen.height <= rectTransform.sizeDelta.y - rectTransform.anchoredPosition.y)
+            if (yPosition < 0.15f && Screen.height <= rectTransform.sizeDelta.y - rectTransform.anchoredPosition.y)
                 rectTransform.position += new Vector3(0, _speed / 100, 0);
-            else if (yPosition > 0.75f && rectTransform.anchoredPosition.y > 1)
+            else if (yPosition > 0.85f && rectTransform.anchoredPosition.y > 1)
                 rectTransform.position += new Vector3(0, -_speed / 100, 0);
         }
     }

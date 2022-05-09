@@ -19,12 +19,16 @@ namespace Resources.Scripts.Command.UI
         
         private readonly Vector2 _offset = new(1,1);
         private bool _isOld = true;
+        private Vector2 _commandSize;
+        private Vector2 _commandPosition;
 
         private void Awake()
         {
             _mainCanvas = GetComponentInParent<Canvas>();
             _rectTransform = GetComponent<RectTransform>();
             _container = transform.parent;
+            _commandSize = _rectTransform.sizeDelta;
+            _commandPosition = _rectTransform.anchoredPosition;
         }
 
         private void Start()
@@ -34,8 +38,7 @@ namespace Resources.Scripts.Command.UI
         
         private void Initialization()
         {
-            transform.localPosition = Vector3.zero;
-            _rectTransform.sizeDelta = Vector2.zero;
+            _rectTransform.anchoredPosition = new Vector2(_commandSize.x / 2, _commandSize.y / -2);
             _initialView.SetActive(true);
             _endView.SetActive(false);
         }
@@ -48,7 +51,7 @@ namespace Resources.Scripts.Command.UI
         private void SetTransparentViewIndex(int index)
         {
             _transparentView.SetActive(true);
-            _transparentView.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
+            _transparentView.GetComponent<RectTransform>().sizeDelta = _commandSize;
             _transparentView.transform.SetParent(CommandUIManager.Instance.CommandFieldContainer);
             _transparentView.transform.SetSiblingIndex(index);
         }
@@ -83,7 +86,7 @@ namespace Resources.Scripts.Command.UI
             _initialView.SetActive(false);
             _endView.SetActive(true);
             _isOld = false;
-            Instantiate(this, _container);
+            var q = Instantiate(this, _container);
         }
         
         public void OnDrag(PointerEventData eventData)
@@ -116,7 +119,7 @@ namespace Resources.Scripts.Command.UI
                 if (raycastResults.Count(r => r.gameObject.TryGetComponent(out UICommandField _)) == 1)
                 {
                     transform.SetParent(CommandUIManager.Instance.CommandFieldContainer);
-                    _rectTransform.sizeDelta = new Vector2(300, 100);
+                    _rectTransform.sizeDelta = _commandSize;
                     transform.SetSiblingIndex(_transparentView.transform.GetSiblingIndex());
                     _transparentView.SetActive(false);
                     _transparentView.transform.SetParent(transform);
