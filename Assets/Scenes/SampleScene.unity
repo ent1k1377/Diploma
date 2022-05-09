@@ -316,7 +316,7 @@ MonoBehaviour:
   _initialView: {fileID: 298907769}
   _endView: {fileID: 1534820274}
   _transparentView: {fileID: 508204670}
-  _distanceBetweenCommand: 0.2
+  _distanceBetweenCommand: 0
 --- !u!114 &36671502
 MonoBehaviour:
   m_ObjectHideFlags: 0
