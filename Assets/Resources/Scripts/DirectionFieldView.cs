@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
+using Resources.Scripts.Command.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,8 +18,20 @@ namespace Resources.Scripts
         private readonly Vector3 _minScaleDirectionField = new(0.1f, 0.1f, 0.1f);
         private readonly float _durationScale = 0.15f;
 
+        private bool _active;
+        
+        private void LateUpdate()
+        {
+            // Должно работать по другому
+            // Деактивирую DirectionField если клик вне его зоны был, но тут вполне могут быть траблы
+            if (Input.GetMouseButtonDown(0) && _active)
+                Invoke(nameof(Deactivate), 0.2f);
+        }
+
         public void Activate()
         {
+            _active = true;
+            _directionField.transform.SetParent(GetComponentInParent<Canvas>().transform);
             _directionField.transform.localScale = _minScaleDirectionField;
             _directionField.SetActive(true);
             _directionField.transform.DOScale(new Vector3(1, 1, 1), _durationScale);
@@ -25,7 +39,9 @@ namespace Resources.Scripts
 
         public void Deactivate()
         {
+            _directionField.transform.SetParent(transform);
             _directionField.transform.DOScale(_minScaleDirectionField, _durationScale).OnComplete(() => _directionField.SetActive(false));
+            _active = false;
         }
 
         public void SetCurrentActiveDirection(int index)

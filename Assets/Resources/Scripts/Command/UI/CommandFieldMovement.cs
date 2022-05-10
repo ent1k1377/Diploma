@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Resources.Scripts.Command.UI
 {
-    public class CommandFieldMovement : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
+    public class CommandFieldMovement : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler, IPointerClickHandler
     {
         [SerializeField] [Range(1, 10)] private float _speed;
         
@@ -45,6 +45,11 @@ namespace Resources.Scripts.Command.UI
                 rectTransform.position += new Vector3(0, _speed / 100, 0);
             else if (yPosition > 0.85f && rectTransform.anchoredPosition.y > 1)
                 rectTransform.position += new Vector3(0, -_speed / 100, 0);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Debug.Log(123);
         }
     }
 }

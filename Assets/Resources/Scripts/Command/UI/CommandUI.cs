@@ -45,7 +45,7 @@ namespace Resources.Scripts.Command.UI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            transform.SetParent(_mainCanvas.transform); 
+            transform.SetParent(_mainCanvas.transform);
         }
         
         private void SetTransparentViewIndex(int index)
@@ -86,7 +86,7 @@ namespace Resources.Scripts.Command.UI
             _initialView.SetActive(false);
             _endView.SetActive(true);
             _isOld = false;
-            var q = Instantiate(this, _container);
+            Instantiate(this, _container);
         }
         
         public void OnDrag(PointerEventData eventData)
