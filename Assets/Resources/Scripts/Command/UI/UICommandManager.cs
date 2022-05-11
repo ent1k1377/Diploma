@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Resources.Scripts.Command.UI
 {
-    public class CommandUIManager : MonoBehaviour
+    public class UICommandManager : MonoBehaviour
     {
         [SerializeField] private GraphicRaycaster _graphicRaycaster;
         [SerializeField] private Transform _commandFieldContainer;
@@ -12,7 +12,7 @@ namespace Resources.Scripts.Command.UI
 
         private Camera _camera;
         
-        public static CommandUIManager Instance { get; private set; }
+        public static UICommandManager Instance { get; private set; }
         
         public GraphicRaycaster GraphicRaycaster => _graphicRaycaster;
         public Transform CommandFieldContainer => _commandFieldContainer;

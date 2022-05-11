@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Resources.Scripts.Command.UI
 {
-    public class CommandFieldMovement : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler, IPointerClickHandler
+    public class CommandFieldMovement : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
     {
         [SerializeField] [Range(1, 10)] private float _speed;
         
@@ -20,7 +20,7 @@ namespace Resources.Scripts.Command.UI
         public void OnDrag(PointerEventData eventData)
         {
             _raycastResults = new List<RaycastResult>();
-            CommandUIManager.Instance.GraphicRaycaster.Raycast(eventData, _raycastResults);
+            UICommandManager.Instance.GraphicRaycaster.Raycast(eventData, _raycastResults);
         }
         
         public void OnEndDrag(PointerEventData eventData)
@@ -37,19 +37,14 @@ namespace Resources.Scripts.Command.UI
         {
             if (!_isDrag) return;
             
-            if (_raycastResults.Count(r => r.gameObject == CommandUIManager.Instance.Content) != 1) return;
-            var yPosition = CommandUIManager.Instance.Camera.WorldToViewportPoint(transform.position).y;
-            var rectTransform = CommandUIManager.Instance.Content.GetComponent<RectTransform>();
+            if (_raycastResults.Count(r => r.gameObject == UICommandManager.Instance.Content) != 1) return;
+            var yPosition = UICommandManager.Instance.Camera.WorldToViewportPoint(transform.position).y;
+            var rectTransform = UICommandManager.Instance.Content.GetComponent<RectTransform>();
 
             if (yPosition < 0.15f && Screen.height <= rectTransform.sizeDelta.y - rectTransform.anchoredPosition.y)
                 rectTransform.position += new Vector3(0, _speed / 100, 0);
             else if (yPosition > 0.85f && rectTransform.anchoredPosition.y > 1)
                 rectTransform.position += new Vector3(0, -_speed / 100, 0);
-        }
-
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            Debug.Log(123);
         }
     }
 }
