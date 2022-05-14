@@ -106,6 +106,13 @@ namespace Resources.Scripts.Command.UI
                 UICommandManager.Instance.GraphicRaycaster.Raycast(eventData, raycastResults);
                 if (raycastResults.Count(r => r.gameObject.TryGetComponent(out UICommandField _)) == 1)
                 {
+
+                    foreach (var r in raycastResults)
+                    {
+                        if (r.gameObject.TryGetComponent(out UICommandField uiCommandField))
+                            uiCommandField.GetChild().ForEach(Debug.Log);
+                    }
+
                     transform.SetParent(UICommandManager.Instance.CommandFieldContainer);
                     _rectTransform.sizeDelta = _commandSize;
                     transform.SetSiblingIndex(_transparentView.transform.GetSiblingIndex());

@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Resources.Scripts.Command.UI
 {
-    public class CommandUI2QWE : MonoBehaviour, IDragHandler
+    public class CommandUISimple : MonoBehaviour, IDragHandler
     {
         [SerializeField] private CommandUI _commandUI;
         [SerializeField] private GameObject _initialView;
@@ -39,7 +38,5 @@ namespace Resources.Scripts.Command.UI
             _commandUI.SetIsOld(false);
             Instantiate(this, _container);
         }
-        
-        
     }
 }
