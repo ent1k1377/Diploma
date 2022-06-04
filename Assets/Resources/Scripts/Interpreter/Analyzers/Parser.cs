@@ -232,7 +232,11 @@ namespace Resources.Scripts.Interpreter.Analyzers
             var gotoToken = Check(TypeList.GetTokenBy(GoTo));
             if (gotoToken is null)
                 return false;
+            
             var labelToken = Check(TypeList.GetTokenBy(Label));
+            if (labelToken is null)
+                return false;
+            
             if (_gotoStorage.ContainsKey(labelToken.Value))
                 _tokenPosition = _gotoStorage[labelToken.Value];
             else
