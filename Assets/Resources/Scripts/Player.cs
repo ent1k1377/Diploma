@@ -72,8 +72,8 @@ namespace Resources.Scripts
                 GiveTo N
                 ";
 
-            _interpreter = new Interpreter.Interpreter();
-            _interpreter.Run(sourceCode4, this);
+            // _interpreter = new Interpreter.Interpreter();
+            // _interpreter.Run(sourceCode4, this);
         }
 
         private void Update()

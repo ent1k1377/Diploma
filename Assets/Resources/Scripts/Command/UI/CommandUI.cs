@@ -112,7 +112,6 @@ namespace Resources.Scripts.Command.UI
                 var uiCommandField = GetUiCommandField(eventData);
                 if (uiCommandField is not null)
                 {
-                    Debug.Log(_commandSize);
                     transform.SetParent(uiCommandField.transform);
                     _rectTransform.sizeDelta = _commandSize;
                     transform.SetSiblingIndex(_transparentView.transform.GetSiblingIndex());

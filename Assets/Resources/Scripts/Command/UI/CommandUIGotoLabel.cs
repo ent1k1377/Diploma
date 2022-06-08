@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Resources.Scripts.Command.UI
@@ -12,9 +11,24 @@ namespace Resources.Scripts.Command.UI
 
         [SerializeField] private CommandUIGoto _gotoCopy;
 
+        private char _labelValue = '`';
+        
         public Transform Point0 => _point0;
         public Transform Point1 => _point1;
 
+        public void SetLabelValue2(char value)
+        {
+            _labelValue = value;
+        }
+        
+        public void SetLabelValue(char value)
+        {
+            _labelValue = value;
+            _gotoCopy.SetLabelValue2(value);
+        }
+
+        public char GetLabelValue() => _labelValue;
+        
         private void Start()
         {
             _commandUI.SetIsOld(false);

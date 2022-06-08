@@ -17,14 +17,28 @@ namespace Resources.Scripts
         private readonly float _durationScale = 0.15f;
 
         private bool _active;
-        
-        private void LateUpdate()
+        private int _indexActiveDirection;
+
+        private readonly Dictionary<int, string> _directionCompass = new Dictionary<int, string>()
         {
-            // Должно работать по другому
-            // Деактивирую DirectionField если клик вне его зоны был, но тут вполне могут быть траблы
-            if (Input.GetMouseButtonDown(0) && _active)
-                Invoke(nameof(Deactivate), 0.2f);
+            {0, "NW"},
+            {1, "N"},
+            {2, "NE"},
+            {3, "W"},
+            {4, "C"},
+            {5, "E"},
+            {6, "SW"},
+            {7, "S"},
+            {8, "SE"},
+        };
+
+        private void OnEnable()
+        {
+            SetCurrentActiveDirection(1);
         }
+
+        private void SetIndexActiveDirection(int index) => _indexActiveDirection = index;
+        public string GetIndexActiveDirection() => _directionCompass[_indexActiveDirection];
 
         public void Activate()
         {
@@ -45,11 +59,21 @@ namespace Resources.Scripts
         public void SetCurrentActiveDirection(int index)
         {
             DeactivateDirections();
+            SetIndexActiveDirection(index);
             _directions[index].Image.sprite = _directions[index].Active;
             _directionIcon.sprite = _directionIcons[index];
             Deactivate();
         }
 
+        
+        private void LateUpdate()
+        {
+            // Должно работать по другому
+            // Деактивирую DirectionField если клик вне его зоны был, но тут вполне могут быть траблы
+            if (Input.GetMouseButtonDown(0) && _active)
+                Invoke(nameof(Deactivate), 0.2f);
+        }
+        
         private void DeactivateDirections()
         {
             foreach (var direction in _directions)

@@ -4,9 +4,11 @@ namespace Resources.Scripts.Command
 {
     public class CommandStep : Command
     {
-        public void Step(string direction)
+        [SerializeField] private DirectionFieldView _directionFieldView;
+        
+        public override string GetText()
         {
-            Debug.Log($"Step: {direction}");
+            return $"Step {_directionFieldView.GetIndexActiveDirection()}\n";
         }
     }
 }

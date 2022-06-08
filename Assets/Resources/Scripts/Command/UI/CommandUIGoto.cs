@@ -15,13 +15,29 @@ namespace Resources.Scripts.Command.UI
         [SerializeField] private Transform _point1;
 
         [SerializeField] private CommandUIGotoLabel _gotoLabelCopy;
+        
         private BezierPath _bezierPath;
         private bool _isOld = true;
         private Transform _container;
+
+        private char _labelValue = '`';
         
         public Transform Point0 => _point0;
         public Transform Point1 => _point1;
-        
+
+        public void SetLabelValue2(char value)
+        {
+            _labelValue = value;
+        }
+
+        public void SetLabelValue(char value)
+        {
+            _labelValue = value;
+            _gotoLabelCopy.SetLabelValue2(value);
+        }
+
+        public char GetLabelValue() => _labelValue;
+
         private void Awake()
         {
             _bezierPath = GetComponent<BezierPath>();
