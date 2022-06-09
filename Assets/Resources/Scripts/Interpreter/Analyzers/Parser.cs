@@ -14,12 +14,12 @@ namespace Resources.Scripts.Interpreter.Analyzers
     {
         private readonly Dictionary<string, int> _gotoStorage = new();
         private readonly List<Token> _tokens;
-        private readonly Player _player;
+        private readonly Player.Player _player;
         private int _tokenPosition;
 
         private readonly CancellationTokenSource _tokenSource = new();
         
-        public Parser(List<Token> tokens, Player player)
+        public Parser(List<Token> tokens, Player.Player player)
         {
             
             _tokens = tokens;
@@ -249,7 +249,6 @@ namespace Resources.Scripts.Interpreter.Analyzers
                     _tokenPosition++;
                 }
             }
-
             return true;
         }
 
@@ -290,7 +289,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
             }
         }
 
-        private void ExternalProcessing(Symbol symbol)
+        private async Task ExternalProcessing(Symbol symbol)
         {
             switch (symbol)
             {
@@ -298,7 +297,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
                 {
                     var argument = m.Argument.Value;
                     if (m.MethodType.Id.Type == Step)
-                        _player.Step(argument);
+                        await _player.Step(argument);
                     else if (m.MethodType.Id.Type == TakeFrom)
                         _player.TakeFrom(argument);
                     else if (m.MethodType.Id.Type == GiveTo) 

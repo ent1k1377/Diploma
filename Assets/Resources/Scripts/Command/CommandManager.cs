@@ -5,7 +5,7 @@ namespace Resources.Scripts.Command
 {
     public class CommandManager : MonoBehaviour
     {
-        [SerializeField] private List<Player> _player;
+        [SerializeField] private List<Player.Player> _player;
         
         private List<Command> _commands;
 

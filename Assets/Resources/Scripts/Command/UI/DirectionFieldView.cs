@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Resources.Scripts
+namespace Resources.Scripts.Command.UI
 {
     public class DirectionFieldView : MonoBehaviour
     {
@@ -19,16 +19,16 @@ namespace Resources.Scripts
         private bool _active;
         private int _indexActiveDirection;
 
-        private readonly Dictionary<int, string> _directionCompass = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> _directionCompass = new()
         {
             {0, "NW"},
-            {1, "N"},
+            {1, "NC"},
             {2, "NE"},
-            {3, "W"},
-            {4, "C"},
-            {5, "E"},
+            {3, "CW"},
+            {4, "CC"},
+            {5, "CE"},
             {6, "SW"},
-            {7, "S"},
+            {7, "SC"},
             {8, "SE"},
         };
 
