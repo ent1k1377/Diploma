@@ -6,6 +6,7 @@ using Resources.Scripts.Interpreter.Exceptions;
 using Resources.Scripts.Interpreter.Symbols;
 using Resources.Scripts.Interpreter.TokenInfo;
 using Resources.Scripts.Interpreter.Types;
+using Resources.Scripts.LevelsCheck;
 using static Resources.Scripts.Interpreter.Types.TokenType;
 
 namespace Resources.Scripts.Interpreter.Analyzers
@@ -17,13 +18,16 @@ namespace Resources.Scripts.Interpreter.Analyzers
         private readonly Player.Player _player;
         private int _tokenPosition;
 
+        private LevelCheck1 _levelCheck1;
+        
         private readonly CancellationTokenSource _tokenSource = new();
         
-        public Parser(List<Token> tokens, Player.Player player)
+        public Parser(List<Token> tokens, Player.Player player, LevelCheck1 levelCheck)
         {
             
             _tokens = tokens;
             _player = player;
+            _levelCheck1 = levelCheck;
             _ = Parse();
             _player.Destroyed += OnDestroyed;
         }
@@ -276,6 +280,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
                 await ExpressionProcessing();
                 await Task.Yield();
             }
+            _levelCheck1.CheckInformationBlock();
         }
 
         private bool ExternalLogicProcessing(Symbol symbol)
@@ -299,9 +304,9 @@ namespace Resources.Scripts.Interpreter.Analyzers
                     if (m.MethodType.Id.Type == Step)
                         await _player.Step(argument);
                     else if (m.MethodType.Id.Type == TakeFrom)
-                        _player.TakeFrom(argument);
+                        await _player.TakeFrom(argument);
                     else if (m.MethodType.Id.Type == GiveTo) 
-                        _player.GiveTo(argument);
+                        await _player.GiveTo(argument);
 
                     break;
                 }

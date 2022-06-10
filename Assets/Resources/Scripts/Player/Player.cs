@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DG.Tweening;
+using Resources.Scripts.InteractiveObjects;
 using Resources.Scripts.Interpreter.TokenInfo;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,10 +12,16 @@ namespace Resources.Scripts.Player
 {
     public class Player : MonoBehaviour
     {
+        [SerializeField] private Sprite _heroIdle;
+        [SerializeField] private Sprite _heroUpHands;
+        
         [SerializeField] private Tilemap _map;
         [SerializeField] private Tilemap _mapObstacle;
         
         [SerializeField] private Vector3 _offset;
+
+        private InformationBlock _informationBlock;
+        private bool _isTaken;
 
         public event UnityAction Destroyed;
 
@@ -36,7 +44,7 @@ namespace Resources.Scripts.Player
             if (!CheckObstacle(newPosition)) return;
             
             var waitMoving = true;
-            transform.DOMove(_map.CellToWorld(playerCell) + target + _offset, 1f).OnComplete(() => waitMoving = false);
+            transform.DOMove(_map.CellToWorld(playerCell + target) + _offset, 1f).OnComplete(() => waitMoving = false);
             while (waitMoving)
                 await Task.Yield();
         }
@@ -51,14 +59,53 @@ namespace Resources.Scripts.Player
             return _mapObstacle.GetTile(target) is null;
         }
 
-        public void TakeFrom(string direction)
+        private void Update()
         {
-            Debug.Log($"TakeFrom: {direction}");
+            var position = _map.WorldToCell(transform.position);
+            Debug.Log(_map.WorldToCell(transform.position));
+        }
+
+        public async Task TakeFrom(string direction)
+        {
+            if (_isTaken) return;
+            
+            var hit = Physics2D.Raycast(transform.position, (Vector3)GetDirection(direction));
+            if (hit.collider != null && hit.transform.TryGetComponent(out InformationBlock informationBlock))
+            {
+                if (informationBlock.GetPosition() == _map.WorldToCell(transform.position) + GetDirection(direction))
+                {
+                    _isTaken = true;
+                    _informationBlock = informationBlock;
+                    GetComponent<SpriteRenderer>().sprite = _heroUpHands;
+                    var waitMoving = true;
+                    informationBlock.transform.DOMove(transform.position, 0.4f).OnComplete(() => waitMoving = false);
+                    while (waitMoving)
+                        await Task.Yield();
+                    informationBlock.transform.SetParent(transform);
+                }
+            }
         }
         
-        public void GiveTo(string direction)
+        public async Task GiveTo(string direction)
         {
-            Debug.Log($"GiveTo: {direction}");
+            if (!_isTaken) return;
+            
+            var hit = Physics2D.RaycastAll(transform.position, (Vector3)GetDirection(direction));
+            if (hit.Length == 1 && CheckObstacle(_map.WorldToCell(transform.position) + GetDirection(direction)))
+            {
+                _isTaken = false;
+                GetComponent<SpriteRenderer>().sprite = _heroIdle;
+                var waitMoving = true;
+                
+                var position = _map.WorldToCell(transform.position) + GetDirection(direction);
+                var q = _map.CellToWorld(position) + _informationBlock.GetOffset;
+                
+                _informationBlock.transform.DOMove(q, 0.4f).OnComplete(() => waitMoving = false);
+                
+                while (waitMoving)
+                    await Task.Yield();
+                _informationBlock.transform.SetParent(null);
+            }
         }
 
         public bool Check(Token leftOperand, Token comparisonOperator, Token rightOperand)

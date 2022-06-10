@@ -34,7 +34,7 @@ namespace Resources.Scripts.Command.UI
 
         private void OnEnable()
         {
-            SetCurrentActiveDirection(1);
+            SetCurrentActiveDirection(7);
         }
 
         private void SetIndexActiveDirection(int index) => _indexActiveDirection = index;

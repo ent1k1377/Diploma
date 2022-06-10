@@ -17,5 +17,8 @@ namespace Resources.Scripts.InteractiveObjects
             var position = _map.WorldToCell(transform.position);
             transform.position = _map.CellToWorld(position) + _offset;
         }
+
+        public Vector3 GetPosition() => _map.WorldToCell(transform.position);
+        public Vector3 GetOffset => _offset;
     }
 }

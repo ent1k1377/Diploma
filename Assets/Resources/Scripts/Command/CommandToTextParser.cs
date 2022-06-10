@@ -1,5 +1,6 @@
 using Resources.Scripts.Command.UI;
 using Resources.Scripts.Interpreter.Analyzers;
+using Resources.Scripts.LevelsCheck;
 using UnityEngine;
 
 namespace Resources.Scripts.Command
@@ -7,6 +8,7 @@ namespace Resources.Scripts.Command
     public class CommandToTextParser : MonoBehaviour
     {
         [SerializeField] private Player.Player _player;
+        [SerializeField] private LevelCheck1 _levelCheck1;
         
         public void OnStart()
         {
@@ -45,7 +47,7 @@ namespace Resources.Scripts.Command
         {
             Tokenizer lexer = new(code);
             lexer.Analysis();
-            _ = new Parser(lexer.Tokens, player);
+            _ = new Parser(lexer.Tokens, player, _levelCheck1);
         }
         
         private void FileWrite()
