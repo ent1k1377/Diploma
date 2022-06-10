@@ -45,7 +45,6 @@ namespace Resources.Scripts
 
         public void FadeOut(UnityAction fadedCallback)
         {
-            Debug.Log(IsFading);
             if (IsFading) return;
             IsFading = true;
             _fadedOutCallback = fadedCallback;

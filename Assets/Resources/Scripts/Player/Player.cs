@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Resources.Scripts.Interpreter.TokenInfo;
 using UnityEngine;
@@ -14,35 +13,37 @@ namespace Resources.Scripts.Player
         [SerializeField] private Tilemap _map;
         [SerializeField] private Tilemap _mapObstacle;
         
-        private readonly Vector3 _offset = new(0.5f, 0.5f, 0);
+        [SerializeField] private Vector3 _offset;
 
         public event UnityAction Destroyed;
+
+        private void Start()
+        {
+            var position = _map.WorldToCell(transform.position);
+            transform.position = _map.CellToWorld(position) + _offset;
+        }
 
         private void OnDestroy()
         {
             Destroyed?.Invoke();
+            transform.DOKill();
         }
 
-        private async UniTask Move(Vector3Int target)
+        private async Task Move(Vector3Int target)
         {
             var playerCell = _map.WorldToCell(transform.position);
             var newPosition = playerCell + target;
-            if (CheckObstacle(newPosition))
-            {
-                var waitMoving = true;
-                transform.DOMove(_map.CellToWorld(playerCell) + target + _offset, 2f).OnComplete(() => waitMoving = false);
-                await UniTask.Delay(2000);
-                // while (waitMoving)
-                // {
-                //     Debug.Log(899);
-                //     await UniTask.DelayFrame(1);
-                // }
-            }
+            if (!CheckObstacle(newPosition)) return;
+            
+            var waitMoving = true;
+            transform.DOMove(_map.CellToWorld(playerCell) + target + _offset, 1f).OnComplete(() => waitMoving = false);
+            while (waitMoving)
+                await Task.Yield();
         }
 
-        public async UniTask Step(string direction)
+        public async Task Step(string direction)
         {
-            await UniTask.WhenAll(Move(GetDirection(direction)));
+            await Move(GetDirection(direction));
         }
         
         private bool CheckObstacle(Vector3Int target)
@@ -50,8 +51,6 @@ namespace Resources.Scripts.Player
             return _mapObstacle.GetTile(target) is null;
         }
 
-        
-        
         public void TakeFrom(string direction)
         {
             Debug.Log($"TakeFrom: {direction}");

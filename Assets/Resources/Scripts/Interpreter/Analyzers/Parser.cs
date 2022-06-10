@@ -60,7 +60,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
             return currentToken;
         }
 
-        private bool MethodProcessing()
+        private async Task<bool> MethodProcessing()
         {
             var method = Check(TypeList.GetMethodsTokens());
             if (method is null)
@@ -70,7 +70,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
             if (argument is null)
                 throw new MissingMethodArgument();
 
-            ExternalProcessing(new MethodOperation(method, argument));
+            await ExternalProcessing(new MethodOperation(method, argument));
             return true;
         }
 
@@ -136,7 +136,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
             return WriteBooleanExpressionResult(booleanExpressions, booleanOperators);
         }
 
-        private bool ConditionalOperatorProcessing()
+        private async Task<bool> ConditionalOperatorProcessing()
         {
             var conditionalToken = Check(TypeList.GetTokenBy(If));
             if (conditionalToken is null)
@@ -153,7 +153,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
                         _tokenPosition--;
                         return true;
                     }
-                    ExpressionProcessing();
+                    await ExpressionProcessing();
                     newInstructions = Check(new List<TokenId> {TypeList.GetTokenBy(Else), TypeList.GetTokenBy(EndIf)});
                 } while (newInstructions is null);
 
@@ -209,7 +209,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
 
                 while (true)
                 {
-                    ExpressionProcessing();
+                    await ExpressionProcessing();
                     if (Check(TypeList.GetTokenBy(EndIf)) is not null)
                         return true;
                 }
@@ -252,11 +252,11 @@ namespace Resources.Scripts.Interpreter.Analyzers
             return true;
         }
 
-        private bool ExpressionProcessing()
+        private async Task<bool> ExpressionProcessing()
         {
-            if (MethodProcessing())
+            if (await MethodProcessing())
                 return true;
-            if (ConditionalOperatorProcessing())
+            if (await ConditionalOperatorProcessing())
                 return true;
             if (GotoProcessing())
                 return true;
@@ -273,7 +273,7 @@ namespace Resources.Scripts.Interpreter.Analyzers
             {
                 if (token.IsCancellationRequested)
                     break;
-                ExpressionProcessing();
+                await ExpressionProcessing();
                 await Task.Yield();
             }
         }

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Resources.Scripts
+namespace Resources.Scripts.Scene
 {
     public class SceneTransition : MonoBehaviour
     {
