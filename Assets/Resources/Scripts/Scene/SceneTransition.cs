@@ -20,7 +20,9 @@ namespace Resources.Scripts.Scene
 
             _instance = this;
         }
-
+        
+        public void ExitFromGame() => Application.Quit();
+        
         public void Restart()
         {
             if (!_isLoading)

@@ -62,7 +62,7 @@ namespace Resources.Scripts.Player
         private void Update()
         {
             var position = _map.WorldToCell(transform.position);
-            Debug.Log(_map.WorldToCell(transform.position));
+            Debug.Log(position);
         }
 
         public async Task TakeFrom(string direction)

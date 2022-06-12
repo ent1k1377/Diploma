@@ -28,7 +28,6 @@ namespace Resources.Scripts.Command.UI
             if (Instance == null)
             {
                 Instance = this;
-                //DontDestroyOnLoad(this);
                 return;
             }
             Destroy(gameObject);

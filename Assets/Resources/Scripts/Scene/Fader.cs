@@ -1,14 +1,11 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Resources.Scripts
+namespace Resources.Scripts.Scene
 {
     [RequireComponent(typeof(Animator))]
     public class Fader : MonoBehaviour
     {
-        private const string FadePath = "Prefabs/Fader";
-
         private Animator _animator;
 
         private static Fader _instance;
