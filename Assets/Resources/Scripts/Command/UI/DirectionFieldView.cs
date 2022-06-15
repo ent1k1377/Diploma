@@ -43,7 +43,6 @@ namespace Resources.Scripts.Command.UI
         public void Activate()
         {
             _active = true;
-            _directionField.transform.SetParent(GetComponentInParent<Canvas>().transform);
             _directionField.transform.localScale = _minScaleDirectionField;
             _directionField.SetActive(true);
             _directionField.transform.DOScale(new Vector3(1, 1, 1), _durationScale);
@@ -51,7 +50,6 @@ namespace Resources.Scripts.Command.UI
 
         public void Deactivate()
         {
-            _directionField.transform.SetParent(transform);
             _directionField.transform.DOScale(_minScaleDirectionField, _durationScale).OnComplete(() => _directionField.SetActive(false));
             _active = false;
         }
